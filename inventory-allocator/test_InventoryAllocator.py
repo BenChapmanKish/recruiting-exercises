@@ -1,30 +1,34 @@
 #!/usr/bin/env python3
-# Ben Chapman-Kish - June 2020
-# Deliverr recruiting exercise: inventory InventoryAllocator tests
-# https://github.com/deliverr/recruiting-exercises/tree/master/inventory-InventoryAllocator
+"""
+Ben Chapman-Kish - June 2020
+Deliverr recruiting exercise: inventory allocator tests
+https://github.com/deliverr/recruiting-exercises/tree/master/inventory-allocator
+"""
 
 import unittest
 from InventoryAllocator import InventoryAllocator
 
-"""
-Static unit test class to test InventoryAllocator.ship
-"""
 class test_InventoryAllocator(unittest.TestCase):
+    """
+    Unit test class to test InventoryAllocator.ship
+    """
 
-    """
-    Given the warehouse dictionary of an output `warehouse`, returns its name.
-    """
     def _get_warehouse_name(self, warehouse):
+        """
+        Given the warehouse dictionary of an output `warehouse`, returns its name.
+        """
+
         # Assuming well-formed output, the name should be the only key in the dict
         # Save on space and use iterator to get this rather than converting to a list
         name = next( iter( warehouse.keys() ) )
         return name
 
-    """
-    Searches for a warehouse in `warehouses` with the name `warehouse_name`.
-    Returns the warehouse object, or None if there is no match.
-    """
     def _find_warehouse_in_list_by_name(self, warehouse_name, warehouses):
+        """
+        Searches for a warehouse in `warehouses` with the name `warehouse_name`.
+        Returns the warehouse object, or None if there is no match.
+        """
+        
         for warehouse in warehouses:
             other_name = self._get_warehouse_name(warehouse)
             if warehouse_name == other_name:
@@ -32,11 +36,12 @@ class test_InventoryAllocator(unittest.TestCase):
             
         return None
 
-    """
-    Compares two shipments `expected` and `output`.
-    Returns True if the shipments are equivalent, otherwise False.
-    """
-    def compare_shipments(self, expected_shipment, output_shipment):
+    def _compare_shipments(self, expected_shipment, output_shipment):
+        """
+        Compares two shipments `expected` and `output`.
+        Returns True if the shipments are equivalent, otherwise False.
+        """
+
         # Compare lengths of shipments
         if len(expected_shipment) != len(output_shipment):
             return False
@@ -69,10 +74,11 @@ class test_InventoryAllocator(unittest.TestCase):
 
 
 
-    """
-    Tests that InventoryAllocator.ship can produce a well-formed output.
-    """
     def test_well_formed_output(self):
+        """
+        Tests that InventoryAllocator.ship can produce a well-formed output.
+        """
+
         order = { "apple": 1 }
         inventory = [
             { "name": "owd", "inventory": { "apple": 1 } }
@@ -100,11 +106,12 @@ class test_InventoryAllocator(unittest.TestCase):
 
 
 
-    """
-    Tests that an order for a particular item can be fulfilled if a warehouse has the
-    exact quantity needed.
-    """
     def test_exact_match(self):
+        """
+        Tests that an order for a particular item can be fulfilled if a warehouse has
+        the exact quantity needed.
+        """
+
         order = { "apple": 3 }
         inventory = [
             { "name": "owd", "inventory": { "apple": 3 } }
@@ -114,13 +121,14 @@ class test_InventoryAllocator(unittest.TestCase):
         ]
 
         output = InventoryAllocator.ship(order, inventory)
-        self.assertTrue(self.compare_shipments(expected, output))
+        self.assertTrue(self._compare_shipments(expected, output))
 
-    """
-    Tests that an order for a particular item can be fulfilled if several warehouses
-    has the exact quantity needed.
-    """
     def test_exact_match_multiple_items(self):
+        """
+        Tests that an order for a particular item can be fulfilled if several warehouses
+        has the exact quantity needed.
+        """
+
         order = { "banana": 6, "orange": 2, "apple": 3 }
         inventory = [
             { "name": "owd", "inventory": { "apple": 3, "banana": 6 } },
@@ -132,14 +140,16 @@ class test_InventoryAllocator(unittest.TestCase):
         ]
 
         output = InventoryAllocator.ship(order, inventory)
-        self.assertTrue(self.compare_shipments(expected, output))
+        self.assertTrue(self._compare_shipments(expected, output))
 
-    """
-    Tests that an order for a particular item will be fulfilled using the cheapest
-    warehouse even if other ones have enough inventory, and that only the requested
-    quantity will be shipped.
-    """
+    
     def test_warehouse_precedence(self):
+        """
+        Tests that an order for a particular item will be fulfilled using the cheapest
+        warehouse even if other ones have enough inventory, and that only the requested
+        quantity will be shipped.
+        """
+
         order = { "apple": 3 }
         inventory = [
             { "name": "owd", "inventory": { "apple": 5 } },
@@ -152,13 +162,15 @@ class test_InventoryAllocator(unittest.TestCase):
         ]
 
         output = InventoryAllocator.ship(order, inventory)
-        self.assertTrue(self.compare_shipments(expected, output))
+        self.assertTrue(self._compare_shipments(expected, output))
 
-    """
-    Tests that when an order can be fulfilled for an item but no single warehouse has
-    enough, that the shipment correctly gets the right quantity from each warehouse.
-    """
+    
     def test_split_across_warehouses(self):
+        """
+        Tests that when an order can be fulfilled for an item but no single warehouse
+        has enough, the shipment correctly gets the right quantity from each warehouse.
+        """
+
         order = { "apple": 10 }
         inventory = [
             { "name": "owd", "inventory": { "apple": 0 } },
@@ -171,13 +183,14 @@ class test_InventoryAllocator(unittest.TestCase):
         ]
 
         output = InventoryAllocator.ship(order, inventory)
-        self.assertTrue(self.compare_shipments(expected, output))
-    
-    """
-    Tests that when an order can be fulfilled for many items but no single warehouse has
-    enough, that the shipment correctly gets the right quantities from each warehouse.
-    """
+        self.assertTrue(self._compare_shipments(expected, output))
+
     def test_split_multiple_items_across_warehouses(self):
+        """
+        Tests that when an order can be fulfilled for many items but no single warehouse
+        has enough, the shipment correctly gets the right quantities from each warehouse.
+        """
+
         order = { "apple": 10, "orange": 1, "banana": 7, "pear": 0 }
         inventory = [
             { "name": "owd", "inventory": { "banana": 2 } },
@@ -194,31 +207,14 @@ class test_InventoryAllocator(unittest.TestCase):
         ]
 
         output = InventoryAllocator.ship(order, inventory)
-        self.assertTrue(self.compare_shipments(expected, output))
+        self.assertTrue(self._compare_shipments(expected, output))
 
-    """
-    Tests that when an order can be fulfilled for an item but no warehouse has enough,
-    that the shipment correctly gets the right quantity from each warehouse.
-    """
-    def test_split_across_warehouses(self):
-        order = { "apple": 10 }
-        inventory = [
-            { "name": "owd", "inventory": { "apple": 6 } },
-            { "name": "dm",  "inventory": { "apple": 12 } }
-        ]
-        expected = [
-            { "owd": { "apple": 6 } },
-            { "dm":  { "apple": 4 } }
-        ]
-
-        output = InventoryAllocator.ship(order, inventory)
-        self.assertTrue(self.compare_shipments(expected, output))
-
-    """
-    Tests that an order for a particular item will not be fulfilled if any warehouse
-    that lists it has 0 of it, or if a warehouse doesn't have any inventory.
-    """
     def test_zero_inventory(self):
+        """
+        Tests that an order for a particular item will not be fulfilled if any warehouse
+        that lists it has 0 of it, or if a warehouse doesn't have any inventory.
+        """
+
         order = { "apple": 1 }
         inventory = [
             { "name": "owd", "inventory": { } },
@@ -227,13 +223,15 @@ class test_InventoryAllocator(unittest.TestCase):
         expected = []
 
         output = InventoryAllocator.ship(order, inventory)
-        self.assertTrue(self.compare_shipments(expected, output))
+        self.assertTrue(self._compare_shipments(expected, output))
 
-    """
-    Tests that an order for a particular item will be fulfilled with only the warehouses
-    that have it in their inventory, and that no additional warehouses are listed.
-    """
     def test_zero_inventory_some_warehouses(self):
+        """
+        Tests that an order for a particular item will be fulfilled with only the
+        warehouses that have it in their inventory, and that no additional warehouses
+        are listed.
+        """
+
         order = { "apple": 3 }
         inventory = [
             { "name": "owd", "inventory": { "apple": 0 } },
@@ -246,13 +244,14 @@ class test_InventoryAllocator(unittest.TestCase):
         ]
 
         output = InventoryAllocator.ship(order, inventory)
-        self.assertTrue(self.compare_shipments(expected, output))
+        self.assertTrue(self._compare_shipments(expected, output))
     
-    """
-    Tests that an order for several items will not be fulfilled if there aren't enough
-    of them across all warehouses to meet the requested quantity.
-    """
     def test_insufficient_inventory_multiple_items(self):
+        """
+        Tests that an order for several items will not be fulfilled if there aren't
+        enough of them across all warehouses to meet the requested quantity.
+        """
+
         order = { "apple": 4, "orange": 5 }
         inventory = [
             { "name": "owd", "inventory": { "apple": 1 } },
@@ -261,15 +260,16 @@ class test_InventoryAllocator(unittest.TestCase):
         expected = []
 
         output = InventoryAllocator.ship(order, inventory)
-        self.assertTrue(self.compare_shipments(expected, output))
+        self.assertTrue(self._compare_shipments(expected, output))
     
-    """
-    Tests the behaviour of the InventoryAllocator when some of the items in the order
-    can be shipped but there is insufficient inventory for others. This behaviour
-    depends on the flag `InventoryAllocator._SHIP_PARTIAL_ORDERS`, and this test has an
-    expected result for either case.
-    """
     def test_insufficient_inventory_some_items(self):
+        """
+        Tests the behaviour of the InventoryAllocator when some of the items in the order
+        can be shipped but there is insufficient inventory for others. This behaviour
+        depends on the flag `InventoryAllocator._SHIP_PARTIAL_ORDERS`, and this test has
+        an expected result for either case.
+        """
+
         order = { "apple": 5, "orange": 5, "banana": 2 , "pear": 1 }
         inventory = [
             { "name": "owd", "inventory": { "apple": 3, "banana": 4 } },
@@ -285,7 +285,7 @@ class test_InventoryAllocator(unittest.TestCase):
             expected = []
 
         output = InventoryAllocator.ship(order, inventory)
-        self.assertTrue(self.compare_shipments(expected, output))
+        self.assertTrue(self._compare_shipments(expected, output))
 
 
 

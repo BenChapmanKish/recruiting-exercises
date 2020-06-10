@@ -1,40 +1,46 @@
 #!/usr/bin/env python3
-# Ben Chapman-Kish - June 2020
-# Deliverr recruiting exercise: inventory allocator
-# https://github.com/deliverr/recruiting-exercises/tree/master/inventory-allocator
+"""
+Ben Chapman-Kish - June 2020
+Deliverr recruiting exercise: inventory allocator
+https://github.com/deliverr/recruiting-exercises/tree/master/inventory-allocator
+"""
 
 from collections import defaultdict
 
-"""
-Inventory Allocator static class
-Contains the class method ship(), which fulfills the requirements of the exercise.
 
-Note: the exercise description does not specify what behaviour to implement if an order
-can only be partially fulfilled - that is, if some items can be shipped in the requested
-quantity but other items cannot.
-I've included a boolean flag `_SHIP_PARTIAL_ORDERS` which you can change to modify this
-behaviour if you so desire, and its default is False.
-"""
 class InventoryAllocator():
-    _SHIP_PARTIAL_ORDERS = False
+    """
+    Inventory Allocator static class
+    Contains the class method ship(), which fulfills the requirements of the exercise.
 
+    Note: the exercise description does not specify what behaviour to implement if an
+    order can only be partially fulfilled - that is, if some items can be shipped in the
+    requested quantity but other items cannot.
+    I've included a boolean flag `_SHIP_PARTIAL_ORDERS` which you can change to modify
+    this behaviour if you so desire, and its default is False.
     """
-    Returns a boolean indicating if partial orders should be shipped or not.
-    """
+
+    _SHIP_PARTIAL_ORDERS = False
+    
     @classmethod
     def shouldShipPartialOrders(cls):
-        return cls._SHIP_PARTIAL_ORDERS
+        """
+        Returns a boolean indicating if partial orders should be shipped or not.
+        """
 
-    """
-    Determines the best shipment for the order `order`, given a list of inventories
-    `warehouse_inventories` representing various warehouses.
-    Item inventory may be spread across any number of warehouses, which are provided in
-    increasing order of cost.
-    Returns a list of maps with the warehouse name as keys. The values are also maps of
-    items to the amount being shipped from this warehouse.    
-    """
+        return cls._SHIP_PARTIAL_ORDERS
+    
     @classmethod
     def ship(cls, order, warehouse_inventories):
+        """
+        Determines the best shipment for the order `order`, given a list of inventories
+        `warehouse_inventories` representing various warehouses.
+        Item inventory may be spread across any number of warehouses, which are provided
+        in increasing order of cost.
+        Returns a list of maps with the warehouse name as keys. The values are also maps
+        of items to the amount being shipped from this warehouse.
+        """
+
         # Store a map of warehouses to the map of item-quantities they will ship
         item_distribution = defaultdict( lambda: {} )
         
